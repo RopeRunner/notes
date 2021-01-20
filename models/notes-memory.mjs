@@ -2,7 +2,7 @@ import { Note, AbstractNotesStore } from './Notes.mjs';
 
 const notes = [];
 
-export class InMemmoryNotesStore extends AbstractNotesStore {
+export default class InMemmoryNotesStore extends AbstractNotesStore {
     async close() { };
 
     async update(key, title, body) {
@@ -27,6 +27,6 @@ export class InMemmoryNotesStore extends AbstractNotesStore {
     }
 
     async keylist() { return Object.keys(notes); }
-    
+
     async count() { return notes.length; }
 }

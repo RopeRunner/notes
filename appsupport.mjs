@@ -5,6 +5,22 @@ import {
     server
 } from './app.mjs';
 import * as util from 'util';
+import { NotesStor } from './models/notes-store.mjs';
+
+async function catchProcessDeath() {
+    debug('urk...');
+
+    await NotesStore.close();
+    await server.close();
+
+    process.exit(0);
+}
+
+process.on('SIGTERM', catchProcessDeath);
+process.on('SIGINT', catchProcessDeath);
+process.on('SIGHUP', catchProcessDeath);
+
+process.on('exit', () => { debug('exiting...'); });
 
 process.on('uncaughtException', function (err) {
     console.error(`I've crashed!!! - ${(err.stack || err)}`);
@@ -43,6 +59,10 @@ export function onError(error) {
             break;
         case 'EADDRINUSE':
             console.error(`${bind} is already in use`);
+            process.exit(1);
+            break;
+        case 'ENOTESSTORE':
+            console.error(`Notes data store initialization failure because `, error.error);
             process.exit(1);
             break;
         default:

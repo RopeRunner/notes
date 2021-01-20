@@ -14,9 +14,6 @@ import {
 } from 'body-parser';
 import * as http from 'http';
 import {
-  InMemmoryNotesStore
-} from './models/notes-memory.mjs';
-import {
   router as notesRouter
 } from './routes/notes.mjs';
 import {
@@ -25,12 +22,14 @@ import {
 import {
   default as fs
 } from 'fs';
-
-export const NotesStore = new InMemmoryNotesStore();
-
 import {
   approotdir
 } from './approotdir.mjs';
+import { useModel as useNotesModel } from './models/notes-store.mjs';
+
+useNotesModel(process.env.NOTES_MODEL ? process.env.NOTES_MODEL : 'memory')
+  .then(store => { })
+  .catch(err => { onError({ code: 'ENOTESSTORE', err }); });
 
 const __dirname = approotdir;
 
